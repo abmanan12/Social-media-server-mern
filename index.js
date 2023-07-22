@@ -6,7 +6,12 @@ require('./db/connect');
 const express = require('express')
 const app = express()
 
-app.use(express.json())
+app.use(express.json({
+    credentials: true
+}))
+
+const cors = require('cors')
+app.use(cors())
 
 app.use(require('./routes/authRoute'))
 app.use(require('./routes/userRoute'))
