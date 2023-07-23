@@ -13,9 +13,13 @@ app.use(express.json({
 const cors = require('cors')
 app.use(cors())
 
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
+
 app.use(require('./routes/authRoute'))
 app.use(require('./routes/userRoute'))
 app.use(require('./routes/postRoute'))
+app.use(require('./routes/imageRoute'))
 
 
 app.listen(process.env.PORT, () => {

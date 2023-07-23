@@ -7,8 +7,15 @@ const PostSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        description: String,
-        images: String,
+        description: {
+            type: String,
+            required: true
+        },
+        createdAt: {
+            type: Date,
+            default: new Date(),
+        },
+        image: String,
         likes: []
 
     },
