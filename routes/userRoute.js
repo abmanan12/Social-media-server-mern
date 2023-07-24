@@ -4,6 +4,7 @@ const User = require('../models/authSchema')
 
 const router = express.Router()
 const bcript = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 
 // get a user
@@ -33,6 +34,26 @@ router.get('/getuser/:id', async (req, res) => {
 })
 
 
+// get all users
+router.get('/getAllUsers', async (req, res) => {
+
+    try {
+
+        const users = await User.find()
+
+        let allUsers = users.map(user => {
+            const { password, ...otherDetails } = user._doc
+            return otherDetails
+        })
+
+        res.status(200).json(allUsers);
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+
+})
+
 // update a user
 router.put('/updateuser/:id', async (req, res) => {
 
@@ -40,18 +61,24 @@ router.put('/updateuser/:id', async (req, res) => {
 
     try {
 
-        const { currentUserId, currentUserAdminStatus, password } = req.body
+        const { _id, currentUserAdminStatus, password } = req.body
 
-        if (id === currentUserId || currentUserAdminStatus) {
+        if (id === _id) {
 
             if (password) {
                 let salt = await bcript.genSalt(10)
                 req.body.password = await bcript.hash(password, salt)
             }
 
-            const user = await User.findByIdAndUpdate(id, req.body, { new: true })
+            const userExist = await User.findByIdAndUpdate(id, req.body, { new: true })
 
-            res.status(200).json(user)
+            const token = jwt.sign(
+                { username: userExist.username, id: userExist._id },
+                process.env.JWTKEY,
+                { expiresIn: "1h" }
+            );
+
+            res.status(200).json({ userExist, token })
 
         }
         else {
