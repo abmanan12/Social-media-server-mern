@@ -30,12 +30,12 @@ router.post('/register', async (req, res) => {
         else {
             const newUser = new User(req.body)
 
-            const user = await newUser.save()
+            const userExist = await newUser.save()
 
-            const token = jwt.sign({ id: user._id, username: user.username },
+            const token = jwt.sign({ id: userExist._id, username: userExist.username },
                 process.env.JWTKEY, { expiresIn: "4h" })
 
-            res.status(200).json({ user, token })
+            res.status(200).json({ userExist, token })
         }
 
     } catch (err) {

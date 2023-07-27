@@ -20,6 +20,8 @@ app.use(require('./routes/authRoute'))
 app.use(require('./routes/userRoute'))
 app.use(require('./routes/postRoute'))
 app.use(require('./routes/imageRoute'))
+app.use(require('./routes/chatRoute'))
+app.use(require('./routes/messageRoute'))
 
 
 app.listen(process.env.PORT, () => {

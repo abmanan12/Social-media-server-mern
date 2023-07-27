@@ -124,21 +124,21 @@ router.put('/:id/follow', async (req, res) => {
 
     const id = req.params.id
 
-    const { currentUserId } = req.body
+    const { _id } = req.body
 
-    if (currentUserId === id) {
+    if (_id === id) {
         res.status(403).json('Action forbidden')
     }
     else {
         try {
 
             let followUser = await User.findById(id)
-            let followingUser = await User.findById(currentUserId)
+            let followingUser = await User.findById(_id)
 
-            if (!followUser.followers.includes(currentUserId) &&
-                !followUser.following.includes(currentUserId)) {
+            if (!followUser.followers.includes(_id) &&
+                !followUser.following.includes(_id)) {
 
-                await followUser.updateOne({ $push: { followers: currentUserId } })
+                await followUser.updateOne({ $push: { followers: _id } })
                 await followingUser.updateOne({ $push: { following: id } })
 
                 res.status(200).json('User Followed!')
@@ -146,9 +146,6 @@ router.put('/:id/follow', async (req, res) => {
             }
             else {
 
-                // await followUser.updateOne({ $pull: { followers: currentUserId } })
-                // await followingUser.updateOne({ $pull: { following: id } })
-                // res.status(403).json('User unfollowed you')
                 res.status(403).json('User already followed you')
 
             }
@@ -162,35 +159,35 @@ router.put('/:id/follow', async (req, res) => {
 
 
 // unfollow a user
-router.put('/:id', async (req, res) => {
+router.put('/:id/unfollow', async (req, res) => {
 
     const id = req.params.id
 
-    const { currentUserId } = req.body
+    const { _id } = req.body
 
-    if (currentUserId === id) {
+    if (_id === id) {
         res.status(403).json('Action forbidden')
     }
     else {
         try {
 
             let followUser = await User.findById(id)
-            let followingUser = await User.findById(currentUserId)
+            let followingUser = await User.findById(_id)
 
             if (followUser.followers.includes(followingUser.id)) {
 
-                await followUser.updateOne({ $pull: { followers: currentUserId } })
+                await followUser.updateOne({ $pull: { followers: _id } })
                 await followingUser.updateOne({ $pull: { following: id } })
 
-                res.status(200).json('User unfollowed1!')
+                res.status(200).json('User unfollowed!')
 
             }
             else if (followUser.following.includes(followingUser.id)) {
 
-                await followUser.updateOne({ $pull: { following: currentUserId } })
+                await followUser.updateOne({ $pull: { following: _id } })
                 await followingUser.updateOne({ $pull: { followers: id } })
 
-                res.status(200).json('User unfollowed2!')
+                res.status(200).json('User unfollowed!')
 
             }
             else {
